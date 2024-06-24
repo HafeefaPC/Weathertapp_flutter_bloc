@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+   final TextEditingController _cityController = TextEditingController();
   
   Widget getWeatherIcon(int code) {
     switch (code) {
@@ -65,6 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
+                child: Container(
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                ),
+              ),
               Align(
                 alignment: const AlignmentDirectional(-3, -0.3),
                 child: Container(
@@ -74,6 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     shape: BoxShape.circle,
                     color: Color(0xFF673AB7),
                   ),
+                ),
+              ),
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
+                child: Container(
+                  decoration: const BoxDecoration(color: Colors.transparent),
                 ),
               ),
               Align(
@@ -283,8 +296,51 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     );
+                  }  else if (state is WeatherBlocInitial) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Enter City Name',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          const SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: TextField(
+                              controller: _cityController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                hintText: 'City Name',
+                                hintStyle: TextStyle(color: Colors.white54),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_cityController.text.isNotEmpty) {
+                                context.read<WeatherBlocBloc>().add(
+                                  FetchWeatherByCity(_cityController.text),
+                                );
+                              }
+                            },
+                            child: const Text('Get Weather'),
+                          ),
+                        ],
+                      ),
+                    );
                   } else {
-                    return Container();
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
                 },
               ),
